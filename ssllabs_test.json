@@ -1,0 +1,26 @@
+{
+    "host": "www.mwam.com",
+    "port": 443,
+    "protocol": "http",
+    "isPublic": false,
+    "status": "READY",
+    "startTime": 1592240063766,
+    "testTime": 1592240234425,
+    "engineVersion": "2.1.5",
+    "criteriaVersion": "2009q",
+    "endpoints": [
+      {
+        "ipAddress": "134.213.235.66",
+        "statusMessage": "Ready",
+        "grade": "B",
+        "gradeTrustIgnored": "B",
+        "hasWarnings": false,
+        "isExceptional": false,
+        "progress": 100,
+        "duration": 170532,
+        "eta": 5,
+        "delegation": 2,
+        "site": "mwam"
+      }
+    ]
+  }
