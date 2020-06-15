@@ -71,7 +71,7 @@ Describe "Start-SslTest" {
                 Start-SslTest -Config $config -Uri "www.somedomain.com"
             } 
             catch {
-                $_.Exception.Message | should be "Queried SSL status 2 times in last 4 seconds with no succees. Please try again later."
+                $_.Exception.Message | should be "Queried SSL status 2 times in last 4 seconds with no succees. Please try again later or disable ssl_endpoint_startNew. The last returned status was NOT_READY."
                 Assert-MockCalled -CommandName Get-Ssl -Scope It -Times 2
             }
         }

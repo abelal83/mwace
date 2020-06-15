@@ -1,6 +1,6 @@
 
 $startNew = $true
-
+$sslCheckHasRun = $false
 function Get-Ssl {
     param (
         [string] $Uri,
@@ -8,6 +8,24 @@ function Get-Ssl {
     )
  
     $completePath = $Config.ssl_endpoint_checker + "?host=$($Uri)"
+
+    $currentState = Invoke-RestMethod -Uri $completePath
+
+    # return if in progress else another assessment starts    
+    switch ($currentState.status.ToUpper()) {
+        "IN_PROGRESS" { 
+                        Write-Information "Assesment in progress..." 
+                        return $currentState
+                    }
+        "READY" { 
+                    if ($script:sslCheckHasRun) {
+                        return $currentState 
+                    }
+        }
+    } 
+    
+ 
+    Write-Debug "Current state is $($currentState.status)"
 
     # api documentation states only 1 can be on
     if ($Config.ssl_endpoint_startNew -and $Config.ssl_endpoint_fromCache) {
@@ -35,9 +53,10 @@ function Get-Ssl {
     if ($Config.ssl_endpoint_publish) {
         $completePath = $completePath + "&publish=on"
         Write-Debug "Enabling publish"
-    }
+    }    
 
     Write-Debug "Invoking call to $completePath"
+    $script:sslCheckHasRun = $true
     return Invoke-RestMethod -Uri $completePath
 
 }
