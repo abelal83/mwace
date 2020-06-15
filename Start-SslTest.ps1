@@ -10,13 +10,13 @@ function Start-SslTest {
 
     $retryCount = 0
     $sleep = $config.sssl_endpoint_retry_sleep
-    if ($result.status -ne "READY") {    
+    if ($result.status.ToUpper() -ne "READY") {    
         
+        # calls to ssl labs are async, using this simple while to get result when ready
         while ($retryCount -lt $config.ssl_endpoint_retry_count) {
             Write-Information "SSL result not ready, retrying in $sleep seconds..."
             Start-Sleep -Seconds $sleep
-            $sleep += $sleep # increment with previous amount to get a better chance of a succeess
-            # calls to ssls labs are async
+            $sleep += $sleep # increment with previous amount to get a better chance of a success            
             $result = Get-Ssl -Config $config -StartNew $false -Uri $site 
     
             $retryCount += 1

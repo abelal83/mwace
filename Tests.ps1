@@ -4,7 +4,7 @@ $DebugPreference = 'SilentlyContinue' # switch to ignore in production mode
 
 Describe "Get-Ssl" {
 
-    $testJsonResponse = Get-Content "$PSScriptRoot\ssllabs_test.json" -Raw
+    $testJsonResponse = Get-Content "$PSScriptRoot\ssllabs_test.json" -Raw | ConvertFrom-Json
     $config = Get-Content "$PSScriptRoot\appsettings.json" -Raw |  ConvertFrom-Json
 
     . ./Get-Ssl.ps1
@@ -49,7 +49,7 @@ Describe "Get-Ssl" {
 
 Describe "Start-SslTest" {
 
-    $testJsonResponse = Get-Content "$PSScriptRoot\ssllabs_test.json" -Raw
+    $testJsonResponse = Get-Content "$PSScriptRoot\ssllabs_test.json" -Raw | ConvertFrom-Json
     $config = Get-Content "$PSScriptRoot\appsettings.json" -Raw |  ConvertFrom-Json
 
     . ./Get-Ssl.ps1 # import for mock purpose only
@@ -62,9 +62,8 @@ Describe "Start-SslTest" {
 
         $config.ssl_endpoint_retry_count = 2 # reduce both to improve test speed
         $config.sssl_endpoint_retry_sleep = 1
-        $notReadyJson = $testJsonResponse | ConvertFrom-Json
-        $notReadyJson.status = "NOT_READY" # mocking not ready, but can be anything
-        $testJsonResponse = $notReadyJson | ConvertTo-Json
+        
+        $testJsonResponse.status = "NOT_READY" # mocking not ready, but can be anything        
 
         It "should retry twice after not READY status" {           
 
