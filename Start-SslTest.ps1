@@ -25,7 +25,8 @@ function Start-SslTest {
     
     if ($retryCount -ge $config.ssl_endpoint_retry_count) {
         Write-Information "SSL result not ready. Set ssl_endpoint_startNew to false to use cached version"
-        Write-Error "Queried SSL status $($config.ssl_endpoint_retry_count) times in last $sleep seconds with no succees. Please try again later."
+        Write-Error "Queried SSL status $($config.ssl_endpoint_retry_count) times in last $sleep seconds with no succees. " + `
+        "Please try again later or disable ssl_endpoint_startNew. The last returned status was $($result.status)."
     
     }
     

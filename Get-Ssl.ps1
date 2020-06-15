@@ -1,4 +1,5 @@
 
+$startNew = $true
 
 function Get-Ssl {
     param (
@@ -18,9 +19,12 @@ function Get-Ssl {
         Write-Debug "Enabling fromCache"
     }
 
-    if ($Config.ssl_endpoint_startNew) {
+    if ($Script:startNew -and $Config.ssl_endpoint_startNew) {
+
         $completePath = $completePath + "&startNew=on"
-        Write-Debug "Enabling startNew"
+
+        Write-Debug "Setting startNew to false as only 1 call should be made to avoid assesment loop"
+        $Script:startNew = $false
     }
 
     if ($Config.ssl_endpoint_all) {
