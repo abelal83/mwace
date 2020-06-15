@@ -1,9 +1,10 @@
-
-$testJsonResponse = Get-Content "$PSScriptRoot\ssllabs_test.json" -Raw
-
+$ErrorActionPreference = 'Stop'
+$InformationPreference = 'SilentlyContinue'
+$DebugPreference = 'SilentlyContinue' # switch to ignore in production mode
 
 Describe "Get-Ssl" {
 
+    $testJsonResponse = Get-Content "$PSScriptRoot\ssllabs_test.json" -Raw
     $config = Get-Content "$PSScriptRoot\appsettings.json" -Raw |  ConvertFrom-Json
 
     . ./Get-Ssl.ps1
@@ -48,10 +49,32 @@ Describe "Get-Ssl" {
 
 Describe "Start-SslTest" {
 
-    . ./Start-Test
+    $testJsonResponse = Get-Content "$PSScriptRoot\ssllabs_test.json" -Raw
+    $config = Get-Content "$PSScriptRoot\appsettings.json" -Raw |  ConvertFrom-Json
+
+    . ./Get-Ssl.ps1 # import for mock purpose only
+    . ./Start-SslTest
     Context "acceptance tests" {
-        It "ItName" {
-            Assertion
+
+        Mock -CommandName Get-Ssl -MockWith { 
+            return $testJsonResponse
+        }
+
+        $config.ssl_endpoint_retry_count = 2 # reduce both to improve test speed
+        $config.sssl_endpoint_retry_sleep = 1
+        $notReadyJson = $testJsonResponse | ConvertFrom-Json
+        $notReadyJson.status = "NOT_READY" # mocking not ready, but can be anything
+        $testJsonResponse = $notReadyJson | ConvertTo-Json
+
+        It "should retry twice after not READY status" {           
+
+            try {
+                Start-SslTest -Config $config -Uri "www.somedomain.com"
+            } 
+            catch {
+                $_.Exception.Message | should be "Queried SSL status 2 times in last 4 seconds with no succees. Please try again later."
+                Assert-MockCalled -CommandName Get-Ssl -Scope It -Times 2
+            }
         }
     }
 }

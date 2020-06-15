@@ -2,8 +2,10 @@
 function Format-Email{
     param(
         [psobject] $Config,
-        [psobject] $json
+        [psobject] $object
     )
 
-    $json | ConvertTo-Html -Head $config.email_format | Out-File "$PSScriptRoot\report.html" -Force
+    $reportPath = "$PSScriptRoot\report.html"
+    Write-Information "Saving report to $reportPath"
+    $object | ConvertTo-Html -Head $config.email_format | Out-File $reportPath -Force
 }

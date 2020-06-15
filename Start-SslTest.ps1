@@ -5,15 +5,17 @@ function Start-SslTest {
         $Uri
     )
     
+    Write-Information "Getting SSL report for $site"
     $result = Get-Ssl -Config $config -Uri $site
 
     $retryCount = 0
-    $sleep = 10
-    if ($result.status -ne "READY") {
-    
-        Write-Information "SSL result not ready, retrying in $sleep seconds..."
+    $sleep = $config.sssl_endpoint_retry_sleep
+    if ($result.status -ne "READY") {    
+        
         while ($retryCount -lt $config.ssl_endpoint_retry_count) {
-            Start-Sleep -Seconds ($sleep += $sleep)
+            Write-Information "SSL result not ready, retrying in $sleep seconds..."
+            Start-Sleep -Seconds $sleep
+            $sleep += $sleep # increment with previous amount to get a better chance of a succeess
             # calls to ssls labs are async
             $result = Get-Ssl -Config $config -StartNew $false -Uri $site 
     
