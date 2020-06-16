@@ -1,8 +1,8 @@
 
 function Start-SslTest {
     param(
-        $Config,
-        $Uri
+        [Object] $Config,
+        [string] $Uri
     )
     
     Write-Information "Getting SSL report for $site"
@@ -30,5 +30,7 @@ function Start-SslTest {
     }
     
     $result.endpoints | Add-Member -Name site -Value $site -MemberType NoteProperty
-    Format-Email -Config $config -Object $result.endpoints
+
+    return $result.endpoints
+    
 }

@@ -19,7 +19,8 @@ Write-Information "Importing scripts..."
 Write-Information "Import complete"
 
 Write-Information "Starting test againt $site"
-Start-SslTest -Config $config -Uri $site
+$result = Start-SslTest -Config $config -Uri $site
+Format-Email -Config $config -Object $result -ReportOnly
 Write-Information "Completed test"
 
 # without properly configured email server this won't work
