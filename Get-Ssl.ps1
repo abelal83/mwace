@@ -18,7 +18,7 @@ function Get-Ssl {
                         return $currentState
                     }
         "READY" { # ignore first ready as we want fresh copy
-                    if ($script:sslCheckHasRun) {
+                    if ($script:sslCheckHasRun -or !$Config.ssl_endpoint_startNew) {
                         return $currentState 
                     }
         }
