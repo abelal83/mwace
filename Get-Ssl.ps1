@@ -26,11 +26,11 @@ function Get-Ssl {
  
     Write-Debug "Current state is $($currentState.status)"
 
-    $completePath = Build-UriPath -Config $Config -Uri $Uri    
+    $completeUri = Build-UriPath -Config $Config -Uri $completePath    
 
-    Write-Debug "Invoking call to $completePath"
+    Write-Debug "Invoking call to $completeUri"
     $script:sslCheckHasRun = $true
-    return Invoke-RestMethod -Uri $completePath
+    return Invoke-RestMethod -Uri $completeUri
 
 }
 
@@ -46,27 +46,27 @@ function Build-UriPath {
         }
         
         if ($Config.ssl_endpoint_fromCache) {
-            $completePath = $completePath + "&fromCache=on"
+            $Uri = $Uri + "&fromCache=on"
             Write-Debug "Enabling fromCache"
         }
     
         if ($Script:startNew -and $Config.ssl_endpoint_startNew) {
     
-            $completePath = $completePath + "&startNew=on"
+            $Uri = $Uri + "&startNew=on"
     
             Write-Debug "Setting startNew to false as only 1 call should be made to avoid assesment loop"
             $Script:startNew = $false
         }
     
         if ($Config.ssl_endpoint_all) {
-            $completePath = $completePath + "&all=on"
+            $Uri = $Uri + "&all=on"
             Write-Debug "Enabling all"
         }
     
         if ($Config.ssl_endpoint_publish) {
-            $completePath = $completePath + "&publish=on"
+            $Uri = $Uri + "&publish=on"
             Write-Debug "Enabling publish"
         }
     
-        return $completePath
+        return $Uri
 }
