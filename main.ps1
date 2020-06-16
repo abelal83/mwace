@@ -28,7 +28,3 @@ Write-Information "Starting test againt $site"
 $result = Start-SslTest -Config $config -Uri $site
 Format-Email -Config $config -Object $result -ReportOnly
 Write-Information "Completed test"
-
-# without properly configured email server this won't work
-# Send-MailMessage -Attachments "$PSScriptRoot\report.html" -Subject "SSL status of $site" `
-#     -BodyAsHtml -To $config.email_to -SmtpServer $config.email_server
