@@ -16,7 +16,13 @@ Write-Information "Importing scripts..."
 . ./Get-Ssl.ps1
 . ./Format-Email.ps1
 . ./Start-SslTest.ps1
+. ./Test-SslAvailability.ps1
 Write-Information "Import complete"
+
+if (!(Test-SslAvailability -Config $config))
+{
+    return
+}
 
 Write-Information "Starting test againt $site"
 $result = Start-SslTest -Config $config -Uri $site
